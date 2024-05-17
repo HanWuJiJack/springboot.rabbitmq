@@ -1,0 +1,29 @@
+server:
+  port: 8005
+
+spring:
+  application:
+    name: mq-producer
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    #这个配置是保证提供者确保消息推送到交换机中，不管成不成功，都会回调
+    publisher-confirm-type: correlated
+    #保证交换机能把消息推送到队列中
+    publisher-returns: true
+    virtual-host: /
+    #这个配置是保证消费者会消费消息，手动确认
+    listener:
+      simple:
+        ##手工确认消费者消费的消息
+        acknowledge-mode: manual
+        ##设置Qos,即RabbitMQ服务器每次推送给消费者未ack消息的个数
+        prefetch=1:
+        concurrency: 1 #消费端的监听个数(即@RabbitListener开启几个线程去处理数据。)
+        max-concurrency: # 消费端的监听最大个数
+    connection-timeout: 15000   # 超时时间
+    template:
+      mandatory: true
+
